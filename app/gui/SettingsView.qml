@@ -518,8 +518,10 @@ Flickable {
                                 var hasCustomValue = fpsField.text && fpsField.text.trim() !== ""
                                 
                                 if (hasCustomValue) {
-                                    // User entered a custom refresh rate - enable fractional refresh rate mode
-                                    var refreshRate = parseFloat(enteredValue)
+                                    // User entered a custom refresh rate - enable fractional refresh rate mode.
+                                    // Parse locale-independently: accept both '.' and ',' as the decimal
+                                    // separator so e.g. 59.94 isn't truncated to 59 under comma locales.
+                                    var refreshRate = parseFloat(String(enteredValue).replace(",", "."))
                                     if (!isNaN(refreshRate)) {
                                         StreamingPreferences.customRefreshRate = refreshRate
                                         StreamingPreferences.enableFractionalRefreshRate = true
@@ -595,6 +597,12 @@ Flickable {
                                                 bottom: 10.0
                                                 top: 500.0
                                                 decimals: 2
+                                                // Force '.' as the decimal separator regardless of the
+                                                // system locale, so '59.94' validates everywhere (under a
+                                                // comma locale the default validator rejects the dot and
+                                                // disables the OK button).
+                                                locale: "C"
+                                                notation: DoubleValidator.StandardNotation
                                             }
 
                                         onTextChanged: {
