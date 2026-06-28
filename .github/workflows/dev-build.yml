@@ -1558,14 +1558,14 @@ jobs:
           # Mount host GL/Vulkan drivers from the Freedesktop runtime
           org.freedesktop.Platform.GL.default:
             version: '23.08'
-            directory: gl-default
+            directory: lib/gl-default
             subdirectories: true
             no-autodownload: true
             autodelete: false
             add-ld-path: lib
           org.freedesktop.Platform.GL.nvidia:
             version: '23.08'
-            directory: gl-nvidia
+            directory: lib/gl-nvidia
             subdirectories: true
             no-autodownload: true
             autodelete: false
@@ -1573,14 +1573,14 @@ jobs:
           # Mount host VA-API drivers for hardware video decode
           org.freedesktop.Platform.VAAPI.Intel:
             version: '23.08'
-            directory: vaapi-intel
+            directory: lib/vaapi-intel
             subdirectories: true
             no-autodownload: true
             autodelete: false
             add-ld-path: lib
           org.freedesktop.Platform.VAAPI.AMD:
             version: '23.08'
-            directory: vaapi-amd
+            directory: lib/vaapi-amd
             subdirectories: true
             no-autodownload: true
             autodelete: false
