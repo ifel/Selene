@@ -43,11 +43,8 @@ jobs:
           qmake6 CONFIG+=test ../tests/tests.pro
           make -j"$(nproc)"
 
-      # Non-blocking ON PURPOSE: the suite includes a red high-bar test
-      # (tst_otpcrypto matchesServerExpectedHash) documenting an open
-      # client/server OTP hash mismatch. Flip to blocking once it's reconciled.
+      # Hard gate: the suite is all-green. Good candidate for a required check.
       - name: Run tests
-        continue-on-error: true
         run: |
           cd build-test
           ./otpcrypto/tst_otpcrypto

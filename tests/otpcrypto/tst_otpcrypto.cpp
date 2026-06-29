@@ -5,9 +5,13 @@
 class TstOtpCrypto: public QObject {
   Q_OBJECT
 private slots:
-  // Locks the current algorithm: SHA-256(pin + salt + passphrase) uppercase hex.
-  // Value computed independently (sha256sum) for these inputs. GREEN.
-  void algorithmIsStable() {
+  // Server-parity lock. This is byte-for-byte the algorithm the Apollo/Helios
+  // host uses to validate the OTP — hex(SHA-256(pin + salt + passphrase)),
+  // uppercase, salt as the raw hex string (NOT decoded). See the host's
+  // nvhttp.cpp: `util::hex(crypto::hash(one_time_pin + salt + otp_passphrase), true)`.
+  // Value computed independently with sha256sum. If this ever drifts, client and
+  // host OTP pairing breaks.
+  void matchesHostOtpAlgorithm() {
     const QString h = OtpCrypto::generateOtpHash(
       "9067", "7e4f274a9a39bd8b3f36ef811d318076", "test");
     QCOMPARE(h, QStringLiteral(
@@ -29,19 +33,6 @@ private slots:
             != OtpCrypto::generateOtpHash("2222", "ab", ""));
   }
 
-  // HIGH BAR — EXPECTED TO FAIL today. The server log for these exact inputs
-  // expected hash 1DBFA68B..., but our client algorithm (plain string
-  // concatenation, see algorithmIsStable above) produces 104B19FE...
-  // i.e. the client OTP hash does NOT match what the server computed. The
-  // salt is a 32-char hex string and is very likely meant to be hex-decoded to
-  // 16 raw bytes before hashing. This red test documents that open
-  // client/server OTP mismatch until it's reconciled.
-  void matchesServerExpectedHash() {
-    const QString h = OtpCrypto::generateOtpHash(
-      "9067", "7e4f274a9a39bd8b3f36ef811d318076", "test");
-    QCOMPARE(h, QStringLiteral(
-      "1DBFA68BC208F14DEF7D6B9355CA49823E3EAED6B8A32B6E031A7AFB28D4F709"));
-  }
 
   void pinValidation_data() {
     QTest::addColumn<QString>("pin");
